@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.IUserDao">
+	<sql id="userziduan">loginname,pwd,name,sex,deptid</sql>
+	<!-- 查询角色 -->
+	<select id="queryUser" parameterType="user" resultMap="usermap">
+		select
+			id uid,
+			<include refid="userziduan"></include>
+		from user 
+		<where>
+			<if test="id!=null and id!=''">
+				id = #{id}
+			</if>
+			<if test="name!=null and name!=''">
+				and name like "%"#{name}"%"
+			</if>
+			<if test="deptid!=null and deptid!=''">
+				and deptid = #{deptid}
+			</if>
+		</where>
+	</select>
+	<!-- 查询角色 -->
+	<select id="loginUser" parameterType="user" resultMap="usermap">
+		select
+			id uid,
+			<include refid="userziduan"></include>
+		from user 
+				where loginname = #{loginname} and pwd = #{pwd}
+	</select>
+	<resultMap type="user" id="usermap">
+		<id property="id" column="uid"/>
+		<result property="loginname" column="loginname"/>
+		<result property="pwd" column="pwd"/>
+		<result property="name" column="name"/>
+		<result property="sex" column="sex"/>
+		<result property="deptid" column="deptid"/>
+		<collection property="roles"  ofType="role" select="dao.IRoleDao.queryRoleToUser" column="uid">
+			<id property="id" column="id"/>
+			<result property="rolename" column="rolename"/>
+			<result property="memo" column="memo"/>
+			<collection property="menus"  ofType="menu" select="dao.IMenuDao.queryMenuToRole" column="id">
+				<id property="id" column="id"/>
+				<result property="menuname" column="menuname"/>
+				<result property="menulink" column="menulink"/>
+				<result property="securyname" column="securyname"/>
+				<result property="pid" column="pid"/>
+				<result property="memo" column="memo"/>
+			</collection>
+		</collection>
+	</resultMap>
+	
+	<!-- 分页查询角色 -->
+	<select id="queryUserByPage" resultMap="usermap">
+		select
+			id uid,
+			<include refid="userziduan"></include>
+		from user 
+		<where>
+			<if test="name!=null and name!=''">
+				 name like "%"#{name}"%"
+			</if>
+			<if test="deptid!=null and deptid!=''">
+				and deptid = #{deptid}
+			</if>
+		</where>
+			limit #{begin},#{pageSize}
+	</select>
+	<!-- 添加用户 -->
+	<insert id="addUser" parameterType="User">
+		<selectKey keyProperty="id" order="AFTER" resultType="int"> 
+			select last_insert_id()
+		</selectKey>
+		insert into user 
+			(<include refid="userziduan"></include>)
+		values 
+			(#{loginname},#{pwd},#{name},#{sex},#{deptid})
+	</insert>
+	<!-- 添加用户角色中间表 -->
+	<insert id="addUser_role" parameterType="User">
+		insert into user_role
+			(userid,roleid)
+		values 
+			(#{userid},#{roleid})
+	</insert>
+	<!-- 删除用户 -->
+	<delete id="deleteUser" parameterType="int">
+		delete from user where id = #{id}
+	</delete>
+	<!-- 删除用户角色中间表 -->
+	<delete id="deleteUser_role" parameterType="int">
+		delete from user_role where userid = #{userid}
+	</delete>
+	<!-- 修改用户信息 -->
+	<update id="updateUser" >
+		update user set 
+			loginname = #{loginname},
+			pwd = #{pwd},
+			name = #{name},
+			sex = #{sex},
+			deptid = #{deptid}
+		where id = #{id}
+	</update>
+</mapper>

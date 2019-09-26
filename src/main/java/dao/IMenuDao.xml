@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.IMenuDao">
+	<sql id="menuziduan">menuname,menulink,securyname,pid,memo</sql>
+	
+	<!-- 查询角色持有的菜单 -->
+	<select id="queryMenuToRole" parameterType="int" resultType="menu">
+		select
+			id,
+			<include refid="menuziduan"></include>
+			roleid
+		from menu r left join role_menu rm on r.id = rm.menuid
+<!-- 		<where>
+			<if test="id!=null and id!=''"> -->
+				where roleid = #{id}
+			<!-- </if>
+		</where> -->
+	</select>
+	
+	<!-- 查询菜单 -->
+	<select id="queryMenu" parameterType="menu" resultType="menu">
+		select
+			id,
+			<include refid="menuziduan"></include>
+		from menu
+ 		<where>
+			<if test="id!=null and id!=''"> 
+				id = #{id}
+			</if>
+			<if test="pid!=null and pid!=''"> 
+				and pid = #{pid}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 分页查询菜单 -->
+	<select id="queryMenuByPage" parameterType="page" resultType="menu">
+		select
+			id,
+			<include refid="menuziduan"></include>
+		from menu 
+			order by securyname
+			limit #{begin},#{pageSize}
+	</select>
+	
+	<!-- 添加菜单-->
+	<insert id="addMenu" parameterType="menu">
+		insert into menu 
+			(<include refid="menuziduan"></include>)
+		values 
+			(#{menuname},#{menulink},#{securyname},#{pid},#{memo})
+	</insert>
+	
+	<!-- 删除菜单 -->
+	<delete id="deleteMenu" parameterType="menu">
+		delete from menu 
+		<where>
+			<if test="id!=null and id!=''"> 
+				id = #{id}
+			</if>
+			<if test="pid!=null and pid!=''"> 
+				and pid = #{pid}
+			</if>
+		</where>
+	</delete>
+	
+	<!-- 修改菜单 -->
+	<update id="updateMenu" parameterType="menu">
+		update menu set 
+			menuname = #{menuname},
+			menulink = #{menulink},
+			securyname = #{securyname},
+			pid = #{pid},
+			memo = #{memo}
+		where id = #{id}
+	</update>
+</mapper>

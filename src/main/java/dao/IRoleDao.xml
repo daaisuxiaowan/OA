@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.IRoleDao">
+	<sql id="roleziduan">rolename,memo</sql>
+	
+	<!-- 查询角色 -->
+	<select id="queryRole" parameterType="int" resultMap="rolemap">
+		select
+			id,
+			<include refid="roleziduan"></include>
+		from role 
+		<where>
+			<if test="id!=null and id!=''">
+				id = #{id}
+			</if>
+		</where>
+	</select>
+	<resultMap type="role" id="rolemap">
+		<id property="id" column="id"/>
+		<result property="rolename" column="rolename"/>
+		<result property="memo" column="memo"/>
+		<collection property="menus"  ofType="menu" select="dao.IMenuDao.queryMenuToRole" column="id">
+			<id property="id" column="id"/>
+			<result property="menuname" column="menuname"/>
+			<result property="menulink" column="menulink"/>
+			<result property="securyname" column="securyname"/>
+			<result property="pid" column="pid"/>
+			<result property="memo" column="memo"/>
+		</collection>
+	</resultMap>
+	
+	<!-- 查询角色根据名字 -->
+	<select id="queryRoleByName" parameterType="Role" resultMap="rolemap">
+		select
+			id,
+			<include refid="roleziduan"></include>
+		from role 
+		<where>
+			<if test="rolename!=null and rolename!=''">
+				rolename = #{rolename}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 分页查询角色 -->
+	<select id="queryRoleByPage" parameterType="page" resultMap="rolemap">
+		select
+			id,
+			<include refid="roleziduan"></include>
+		from role 
+			limit #{begin},#{pageSize}
+	</select>
+	<!-- 查询用户对应角色 -->
+	<select id="queryRoleToUser" parameterType="int" resultMap="rolemap">
+		select
+			id,
+			<include refid="roleziduan"></include>,
+			userid
+		from role r left join user_role ur on r.id = ur.roleid
+		<!-- <where>
+			<if test="id!=null and id!=''"> -->
+				where userid = #{id}
+	<!-- 		</if>
+		</where> -->
+	</select>
+	<!-- 添加角色-->
+	<insert id="addRole" parameterType="role">
+		<selectKey keyProperty="id" order="AFTER" resultType="int"> 
+			select last_insert_id()
+		</selectKey>
+		insert into role 
+			(<include refid="roleziduan"></include>)
+		values 
+			(#{rolename},#{memo})
+	</insert>
+	<!-- 添加角色菜单中间表 -->
+	<insert id="addRole_menu">
+		insert into role_menu
+			(menuid,roleid)
+		values 
+			(#{menuid},#{roleid})
+	</insert>
+	<!-- 删除用户 -->
+	<delete id="deleteRole" parameterType="int">
+		delete from role where id = #{id}
+	</delete>
+	<!-- 删除用户角色中间表 -->
+	<delete id="deleteRole_menu" parameterType="int">
+		delete from role_menu where roleid = #{roleid}
+	</delete>
+	<!-- 修改角色信息 -->
+	<update id="updateRole" parameterType="role">
+		update role set 
+			rolename = #{rolename},
+			memo = #{memo}
+		where id = #{id}
+	</update>
+</mapper>

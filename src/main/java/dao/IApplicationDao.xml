@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.IApplicationDao">
+		
+	<!-- 查询申请表 -->
+	<select id="queryApplication" parameterType="application" resultType="application">
+		select
+			id,
+			title,
+			status,
+			filepath,
+			tempid,
+			userid,
+			appdate
+		from application
+ 		<where>
+			<if test="id!=null and id!=''"> 
+				id = #{id}
+			</if>
+			<if test="userid!=null and userid!=''"> 
+				and userid = #{userid}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 分页查询申请表 -->
+	<select id="queryApplicationByPage" parameterType="application" resultType="application">
+		select
+			id,
+			title,
+			status,
+			filepath,
+			tempid,
+			userid,
+			appdate
+		from application
+			where userid = #{userid} 
+			order by appdate desc
+			limit #{begin},#{pageSize}
+	</select>
+	
+	<!-- 添加申请表-->
+	<insert id="addApplication" parameterType="application">
+		<selectKey keyProperty="id" order="AFTER" resultType="int"> 
+			select last_insert_id()
+		</selectKey>
+		insert into application 
+			(title,
+			status,
+			filepath,
+			tempid,
+			userid,
+			appdate)
+		values 
+			(#{title},
+			#{status},
+			#{filepath},
+			#{tempid},
+			#{userid},
+			#{appdate})
+	</insert>
+	
+	<!-- 修改申请表-->
+	<update id="updateApplication" parameterType="application">
+		UPDATE application SET
+			title = #{title},
+			status = #{status},
+			filepath = #{filepath},
+			tempid = #{tempid},
+			userid = #{userid}
+		WHERE ID = #{id}
+	</update>
+	
+</mapper>

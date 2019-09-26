@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.IAnnouncementDao">
+		
+	<!-- 查询公告 -->
+	<select id="queryAnnouncement" parameterType="Announcement" resultType="Announcement">
+		select
+			id,
+			name,
+			content,
+			releasedate,
+			publisher
+		from Announcement
+ 		<where>
+			<if test="id!=null and id!=''"> 
+				id = #{id}
+			</if>
+		</where>
+		ORDER BY releasedate DESC
+	</select>
+	
+	<!-- 分页查询公告-->
+	<select id="queryAnnouncementByPage" resultType="Announcement">
+		select
+			id,
+			name,
+			content,
+			releasedate,
+			publisher
+		from Announcement 
+		where
+			releasedate between #{starttime} and #{endtime}
+			and name like "%"#{name}"%"
+		ORDER BY releasedate DESC
+			limit #{begin},#{pageSize}
+	</select>
+	
+	<!-- 查询公告数量-->
+	<select id="queryAnnouncementCount" resultType="Announcement">
+		select
+			id,
+			name,
+			content,
+			releasedate,
+			publisher
+		from Announcement 
+		where
+			releasedate between #{starttime} and #{endtime}
+			and name like "%"#{name}"%"
+		ORDER BY releasedate DESC
+	</select>
+	
+	<!-- 添加公告-->
+	<insert id="addAnnouncement" parameterType="Announcement">
+		insert into Announcement 
+			(name,
+			content,
+			releasedate,
+			publisher)
+		values 
+			(#{name},
+			#{content},
+			#{releasedate},
+			#{publisher})
+	</insert>
+	
+	<!-- 删除公告 -->
+	<delete id="deleteAnnouncement" parameterType="int">
+		delete from Announcement 
+				where id = #{id}
+	</delete>
+	
+	<!-- 修改部门 
+	<update id="updateAnnouncement" parameterType="Announcement">
+		update Announcement set 
+			Announcementname = #{Announcementname}
+		where id = ${id}
+	</update> -->
+</mapper>

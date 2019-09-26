@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.IDeptDao">
+		
+	<!-- 查询部门 -->
+	<select id="queryDept" parameterType="int" resultType="dept">
+		select
+			id,
+			deptname
+		from dept
+ 		<where>
+			<if test="id!=null and id!=''"> 
+				id = #{id}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 分页查询部门 -->
+	<select id="queryDeptByPage" parameterType="page" resultType="dept">
+		select
+			id,
+			deptname
+		from dept 
+			limit #{begin},#{pageSize}
+	</select>
+	
+	<!-- 添加部门-->
+	<insert id="addDept" parameterType="dept">
+		insert into dept 
+			(deptname)
+		values 
+			(#{deptname})
+	</insert>
+	
+	<!-- 删除部门 -->
+	<delete id="deleteDept" parameterType="int">
+		delete from dept 
+				where id = #{id}
+	</delete>
+	
+	<!-- 修改部门 -->
+	<update id="updateDept" parameterType="dept">
+		update dept set 
+			deptname = #{deptname}
+		where id = ${id}
+	</update>
+</mapper>

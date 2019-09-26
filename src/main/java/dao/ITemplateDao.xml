@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.ITemplateDao">
+		
+	<!-- 查询模板表 -->
+	<select id="queryTemplate" parameterType="template" resultType="template">
+		select
+			id,
+			name,
+			pdkey,
+			filepath
+		from Template
+ 		<where>
+			<if test="id!=null and id!=''"> 
+				id = #{id}
+			</if>
+			<if test="pdkey!=null and pdkey!=''"> 
+				and pdkey = #{pdkey}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 分页查询模板表 -->
+	<select id="queryTemplateByPage" parameterType="page" resultType="Template">
+		select
+			id,
+			name,
+			pdkey,
+			filepath
+		from Template 
+			limit #{begin},#{pageSize}
+	</select>
+	
+	<!-- 添加模板表-->
+	<insert id="addTemplate" parameterType="template">
+		insert into Template 
+			(name,
+			pdkey,
+			filepath)
+		values 
+			(#{name},
+			#{pdkey},
+			#{filepath})
+	</insert>
+	
+	<!-- 修改模板表-->
+	<update id="updateTemplate" parameterType="template">
+		update Template set
+			name = #{name},
+			pdkey = #{pdkey},
+			filepath = #{filepath}
+		WHERE ID = #{id}
+	</update>
+	
+	<!-- 删除模板表-->
+	<delete id="deleteTemplate" parameterType="int">
+		DELETE FROM Template 
+		WHERE ID = #{id}
+	</delete>
+	
+</mapper>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.IActDao">
+		
+	<!-- 查询流程定义表 -->
+	<select id="queryAct" parameterType="Act" resultType="Act">
+		select
+			id,
+			name,
+			acttype,
+			pdkey,
+			filepath,
+			version
+		from Act
+ 		<where>
+			<if test="id!=null and id!=''"> 
+				id = #{id}
+			</if>
+			<if test="pdkey!=null and pdkey!=''"> 
+				and pdkey = #{pdkey}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 分页查询流程定义表 -->
+	<select id="queryActByPage" parameterType="page" resultType="Act">
+		select
+			id,
+			name,
+			acttype,
+			pdkey,
+			filepath,
+			version
+		from Act 
+			limit #{begin},#{pageSize}
+	</select>
+	
+	<!-- 添加流程定义表-->
+	<insert id="addAct" parameterType="Act">
+		insert into Act 
+			(name,
+			acttype,
+			pdkey,
+			filepath,
+			version)
+		values 
+			(#{name},
+			#{acttype},
+			#{pdkey},
+			#{filepath},
+			#{version})
+	</insert>
+	
+	<!-- 修改流程定义表-->
+	<update id="updateAct" parameterType="Act">
+		update Act set
+			name = #{name},
+			acttype = #{acttype},
+			pdkey = #{pdkey},
+			filepath = #{filepath},
+			version = #{version}
+		WHERE ID = #{id}
+	</update>
+	
+	<!-- 删除流程定义表-->
+	<delete id="deleteAct" parameterType="int">
+		DELETE FROM Act 
+		WHERE ID = #{id}
+	</delete>
+	
+</mapper>

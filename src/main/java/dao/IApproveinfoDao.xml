@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.IApproveinfoDao">
+		
+	<!-- 查询审核表 -->
+	<select id="queryApproveinfo" parameterType="approveinfo" resultType="approveinfo">
+		select
+			id,
+			userid,
+			approvedate,
+			approval,
+			comment,
+			appid
+		from approveinfo
+ 		<where>
+			<if test="appid!=null and appid!=''"> 
+				and appid = #{appid}
+			</if>
+		</where>
+	</select>
+	
+	
+	<!-- 添加审核表-->
+	<insert id="addApproveinfo" parameterType="approveinfo">
+		insert into approveinfo 
+			(userid,
+			approval,
+			approvedate,
+			comment,
+			appid)
+		values 
+			(#{userid},
+			#{approval},
+			#{approvedate},
+			#{comment},
+			#{appid})
+	</insert>
+	
+</mapper>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.IKnowledgeDao">
+		
+	<!-- 查询文件 -->
+	<select id="queryKnowledge" parameterType="Knowledge" resultType="Knowledge">
+		select
+			id,
+			name,
+			filepath,
+			releasedate,
+			publisher
+		from Knowledge
+ 		<where>
+			<if test="id!=null and id!=''"> 
+				id = #{id}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 分页查询文件-->
+	<select id="queryKnowledgeByPage" resultType="knowledge">
+		select
+			id,
+			name,
+			filepath,
+			releasedate,
+			publisher
+		from knowledge
+		where  
+			releasedate between #{starttime} and #{endtime}
+			and name like "%"#{name}"%"
+		ORDER BY releasedate desc
+		limit #{begin},#{pageSize}
+	</select>
+	
+	<!-- 查询文件总数-->
+	<select id="queryKnowledgeCount" resultType="knowledge">
+		select
+			id,
+			name,
+			filepath,
+			releasedate,
+			publisher
+		from knowledge
+		where  
+			releasedate between #{starttime} and #{endtime}
+			and name like "%"#{name}"%"
+	</select>
+	
+	<!-- 添加文件-->
+	<insert id="addKnowledge" parameterType="knowledge">
+		insert into knowledge 
+			(name,
+			filepath,
+			releasedate,
+			publisher)
+		values 
+			(#{name},
+			#{filepath},
+			#{releasedate},
+			#{publisher})
+	</insert>
+	
+	<!-- 删除文件 -->
+	<delete id="deleteKnowledge" parameterType="int">
+		delete from knowledge 
+				where id = #{id}
+	</delete>
+	
+	<!-- 修改部门 
+	<update id="updateknowledge" parameterType="knowledge">
+		update knowledge set 
+			knowledgename = #{knowledgename}
+		where id = ${id}
+	</update> -->
+</mapper>
